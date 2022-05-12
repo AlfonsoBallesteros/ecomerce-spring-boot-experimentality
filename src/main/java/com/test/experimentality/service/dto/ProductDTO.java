@@ -1,10 +1,7 @@
 package com.test.experimentality.service.dto;
 
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -15,6 +12,8 @@ import java.util.UUID;
 @Setter
 @ToString
 @Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class ProductDTO implements Serializable {
 
     private UUID id;

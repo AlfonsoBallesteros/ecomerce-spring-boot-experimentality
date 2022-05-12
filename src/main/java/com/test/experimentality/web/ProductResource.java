@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.test.experimentality.service.FileUploadService;
 import com.test.experimentality.service.ProductService;
+import com.test.experimentality.service.SearchService;
 import com.test.experimentality.service.dto.ProductDTO;
 import com.test.experimentality.web.errors.BadRequestException;
 import com.test.experimentality.web.input.ProductInput;
@@ -11,6 +12,10 @@ import com.test.experimentality.web.utils.HeaderUtils;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -21,6 +26,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -38,6 +45,8 @@ public class ProductResource {
     private static final String applicationName = "testExperiemtality";
 
     private final ProductService productService;
+
+    private final SearchService searchService;
 
     private final FileUploadService fileUploadService;
 
@@ -69,11 +78,9 @@ public class ProductResource {
                 .body(result);
     }
 
-    /*@GetMapping("/posts")
-    public ResponseEntity<List<PostDTO>> getAllPosts(PostCriteria criteria, Pageable pageable) {
-        log.debug("REST request to get Posts by criteria: {}", criteria);
-        Page<PostDTO> page = postQueryService.findByCriteria(criteria, pageable);
-        HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
-        return ResponseEntity.ok().headers(headers).body(page.getContent());
-    }*/
+    @GetMapping("/more-search")
+    public ResponseEntity<List<ProductDTO>> getAllPosts(@PageableDefault(size = 10) Pageable pageable) {
+        List<ProductDTO> products = productService.findAll(searchService.findAll(pageable));
+        return ResponseEntity.ok().body(products);
+    }
 }
